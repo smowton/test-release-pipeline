@@ -20,5 +20,6 @@ runs:
         echo "mvn ${{ inputs.mvn-cli-opts }} -DskipTests -DskipAssembly=true -Dmaven.install.skip=true -Drevision=${{ github.ref }} deploy"
         mvn ${{ inputs.mvn-cli-opts }} -DskipTests -DskipAssembly=true -Dmaven.install.skip=true -Drevision=${{ github.ref }} deploy
       env:
+        SIGN_KEY_PASS: ${{ secrets.GPG_PRIVATE_KEY_PASSPHRASE }}
         MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
         MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
