@@ -63,11 +63,11 @@ jobs:
           test -n "${{ github.ref }}" && REVISION="${{ github.ref }}" || REVISION=`git describe --always --long --tags`
           export REVISION
           echo "REV: ${REVISION} - Descr: Pipeline ${{ github.run_id }} / JOB ${{ github.job }} (${{ github.job_workflow_sha }} - Tag: ${{ github.ref_name }} ${{ env.MAVEN_CLI_OPTS }} test"
-          mvn -Drevision=${REVISION} -Drp.description="Pipeline ${{ github.run_id }} / JOB ${{ github.job }} (${{ github.job_workflow_sha }})" -Drp.tags="${{ github.ref_name }}" ${{ env.MAVEN_CLI_OPTS }} compile
+          mvn -Prelease -Drevision=${REVISION} -Drp.description="Pipeline ${{ github.run_id }} / JOB ${{ github.job }} (${{ github.job_workflow_sha }})" -Drp.tags="${{ github.ref_name }}" ${{ env.MAVEN_CLI_OPTS }} compile
 
       - name: Package
         run: |
-          mvn ${{ env.MAVEN_CLI_OPTS }} "-Drevision=${REVISION}" -DskipTests -DskipITs package
+          mvn ${{ env.MAVEN_CLI_OPTS }} -Prelease "-Drevision=${REVISION}" -DskipTests -DskipITs package
 
       - name: Java ${{ matrix.Java }} test
         uses: ./.github/actions/test
