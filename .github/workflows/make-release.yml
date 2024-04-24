@@ -32,6 +32,12 @@ jobs:
       - run: echo "Building tag ${{ github.ref }}"
         shell: bash
 
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2 # do not download the whole git history
+          ref: ${{ github.ref }}
+
       # install Java SDK on the runner
       - name: Set up JDK ${{ matrix.Java }}
         uses: actions/setup-java@v4
