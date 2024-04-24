@@ -6,7 +6,7 @@
 version: 2
 updates:
   # Main dependencies for Maven
-  - package-ecosystem: "Maven"
+  - package-ecosystem: "maven"
     directory: "/" # Location of package manifests
     schedule:
       interval: "weekly"
