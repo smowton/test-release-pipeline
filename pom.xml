@@ -129,7 +129,6 @@
   </dependencies>
 
   <profiles>
-
     <profile>
       <id>release</id>
       <build>
@@ -168,7 +167,6 @@
               <publishingServerId>central</publishingServerId>
               <tokenAuth>true</tokenAuth>
               <autoPublish>true</autoPublish>
-              <waitUntil>published</waitUntil>
               <checksums>all</checksums>
             </configuration>
           </plugin>
