@@ -31,24 +31,50 @@ jobs:
     steps:
       - run: echo "Building tag ${{ github.ref }}"
         shell: bash
-      - uses: ./.github/actions/init-java-repo
+
+      # install Java SDK on the runner
+      - name: Set up JDK ${{ matrix.Java }}
+        uses: actions/setup-java@v4
         with:
           java-version: ${{ matrix.Java }}
+          distribution: 'temurin'
+          cache: 'maven'
+          check-latest: true
+          cache-dependency-path: |
+            pom.xml
+          server-id: central
+          # environment variables for the username and password/token to the Apache Maven repository
+          server-username: MAVEN_USERNAME
+          server-password: MAVEN_PASSWORD
           gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
+          gpg-passphrase: SIGN_KEY_PASS # Env var that holds the key's passphrase
+
+      # cache Maven dependencies for later use - use same cache name as 'setup-java' in the previous step
+      - name: Cache local Maven repository
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2/repository
+          key: setup-java-${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
       - name: Build
         run: |
           test -n "${{ github.ref }}" && REVISION="${{ github.ref }}" || REVISION=`git describe --always --long --tags`
           export REVISION
           echo "REV: ${REVISION} - Descr: Pipeline ${{ github.run_id }} / JOB ${{ github.job }} (${{ github.job_workflow_sha }} - Tag: ${{ github.ref_name }} ${{ env.MAVEN_CLI_OPTS }} test"
           mvn -Drevision=${REVISION} -Drp.description="Pipeline ${{ github.run_id }} / JOB ${{ github.job }} (${{ github.job_workflow_sha }})" -Drp.tags="${{ github.ref_name }}" ${{ env.MAVEN_CLI_OPTS }} compile
+
       - name: Package
         run: |
           mvn ${{ env.MAVEN_CLI_OPTS }} "-Drevision=${REVISION}" -DskipTests -DskipITs package
+
       - name: Java ${{ matrix.Java }} test
         uses: ./.github/actions/test
         with:
           java-version: ${{ matrix.Java }}
           mvn-cli-opts: $MAVEN_CLI_OPTS
+
       - name: Deploy to Maven Central
         uses: ./.github/actions/release
         with:
@@ -57,6 +83,7 @@ jobs:
           gpg-passphrase: ${{ secrets.GPG_PRIVATE_KEY_PASSPHRASE }}
           sonatype-user: ${{ secrets.OSSRH_USERNAME }}
           sonatype-token: ${{ secrets.OSSRH_TOKEN }}
+
       - name: Publish deployment notification to GitHub
         uses: ./.github/actions/publish
         with:
