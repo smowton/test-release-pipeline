@@ -26,8 +26,7 @@ runs:
     - name: Publish package
       shell: bash
       run: |
-         mvn ${{ inputs.mvn-cli-opts }} -Prelease -DskipTests -DskipAssembly=true -Dmaven.install.skip=true -Drevision=${{ github.ref_name }} deploy
+         mvn ${{ inputs.mvn-cli-opts }} -Prelease -DskipTests -DskipAssembly=true -Dmaven.install.skip=true -Drevision=${{ github.ref_name }} -Dgpg.passphrase=${{ inputs.gpg-passphrase }} deploy
       env:
-        SIGN_KEY_PASS: ${{ inputs.gpg-passphrase }}
         MAVEN_USERNAME: ${{ inputs.sonatype-user }}
         MAVEN_PASSWORD: ${{ inputs.sonatype-token }}
