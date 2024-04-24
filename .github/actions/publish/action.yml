@@ -15,16 +15,20 @@ runs:
       # previous tag
       run: |
         echo "PREV_TAG=$(git tag --sort=-v:refname | sed -n '2p')" >> $GITHUB_ENV
+        echo "TEST=abc" >> $GITHUB_ENV
+        echo "FOO=$(git status)" >> $GITHUB_ENV
 
     - name: Print previous tag
       shell: bash
       run: |
         echo "prev tag: ${{ env.PREV_TAG }}"
         echo "cur tag: ${{ github.ref_name }}"
+        echo "test: ${{ env.TEST }}"
+        echo "${{ env.FOO }}"
 
-    - name: Print all env variables
-      shell: bash
-      run: env
+#    - name: Print all env variables
+#      shell: bash
+#      run: env
 
     - name: Generate changelog
       id: changelog
