@@ -34,6 +34,7 @@ jobs:
       - uses: ./.github/actions/init-java-repo
         with:
           java-version: ${{ matrix.Java }}
+          gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
       - name: Build
         run: |
           test -n "${{ github.ref }}" && REVISION="${{ github.ref }}" || REVISION=`git describe --always --long --tags`
@@ -53,5 +54,10 @@ jobs:
         with:
           java-version: ${{ matrix.Java }}
           mvn-cli-opts: $MAVEN_CLI_OPTS
+          gpg-passphrase: ${{ secrets.GPG_PRIVATE_KEY_PASSPHRASE }}
+          sonatype-user: ${{ secrets.OSSRH_USERNAME }}
+          sonatype-token: ${{ secrets.OSSRH_TOKEN }}
       - name: Publish deployment notification to GitHub
         uses: ./.github/actions/publish
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}

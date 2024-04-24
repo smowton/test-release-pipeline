@@ -8,6 +8,15 @@ inputs:
   mvn-cli-opts:
     description: 'The client options to pass to Maven'
     required: true
+  gpg-passphrase:
+    description: 'GPG Private Key Passphrase'
+    required: true
+  sonatype-user:
+    description: 'Maven Central user'
+    required: true
+  sonatype-token:
+    description: 'Maven Central token'
+    required: true
 
 runs:
   using: "composite"
@@ -20,6 +29,6 @@ runs:
         echo "mvn ${{ inputs.mvn-cli-opts }} -DskipTests -DskipAssembly=true -Dmaven.install.skip=true -Drevision=${{ github.ref }} deploy"
         mvn ${{ inputs.mvn-cli-opts }} -DskipTests -DskipAssembly=true -Dmaven.install.skip=true -Drevision=${{ github.ref }} deploy
       env:
-        SIGN_KEY_PASS: ${{ secrets.GPG_PRIVATE_KEY_PASSPHRASE }}
-        MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
-        MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
+        SIGN_KEY_PASS: ${{ inputs.gpg-passphrase }}
+        MAVEN_USERNAME: ${{ inputs.sonatype-user }}
+        MAVEN_PASSWORD: ${{ inputs.sonatype-token }}
