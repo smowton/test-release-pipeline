@@ -129,14 +129,34 @@
   </dependencies>
 
   <profiles>
+
     <profile>
       <id>release</id>
       <build>
         <plugins>
-          <!-- Sign the artifacts -->
+          <!-- In order to release the artifact to Maven Central it needs to be
+               signed -->
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-gpg-plugin</artifactId>
+            <version>3.2.4</version>
+            <executions>
+              <execution>
+                <id>sign-artifacts</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>sign</goal>
+                </goals>
+                <configuration>
+                  <!-- This is required to make sure the plugin does not stop
+                       asking for user input on the passphrase -->
+                  <gpgArguments>
+                    <arg>--pinentry-mode</arg>
+                    <arg>loopback</arg>
+                  </gpgArguments>
+                </configuration>
+              </execution>
+            </executions>
           </plugin>
           <!-- Plugin for deploying artifacts to Maven Central -->
           <plugin>
@@ -397,30 +417,6 @@
               <goals>
                 <goal>check</goal>
               </goals>
-            </execution>
-          </executions>
-        </plugin>
-        <!-- In order to release the artifact to Maven Central it needs to be
-             signed -->
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-gpg-plugin</artifactId>
-          <version>3.2.4</version>
-          <executions>
-            <execution>
-              <id>sign-artifacts</id>
-              <phase>verify</phase>
-              <goals>
-                <goal>sign</goal>
-              </goals>
-              <configuration>
-                <!-- This is required to make sure the plugin does not stop
-                     asking for user input on the passphrase -->
-                <gpgArguments>
-                  <arg>--pinentry-mode</arg>
-                  <arg>loopback</arg>
-                </gpgArguments>
-              </configuration>
             </execution>
           </executions>
         </plugin>

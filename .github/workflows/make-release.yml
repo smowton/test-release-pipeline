@@ -38,6 +38,14 @@ jobs:
           fetch-depth: 2 # do not download the whole git history
           ref: ${{ github.ref }}
 
+      - id: install-secret-key
+        name: Install gpg secret key
+        run: |
+          # Install gpg secret key
+          cat <(echo -e "${{ secrets.GPG_PRIVATE_KEY }}" | gpg --batch --import
+          # Verify gpg secret key
+          gpg --list-secret-keys --keyid-format LONG
+
       # install Java SDK on the runner
       - name: Set up JDK ${{ matrix.Java }}
         uses: actions/setup-java@v4
@@ -53,7 +61,6 @@ jobs:
           server-username: MAVEN_USERNAME
           server-password: MAVEN_PASSWORD
           gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
-          gpg-passphrase: SIGN_KEY_PASS # Env var that holds the key's passphrase
 
       # cache Maven dependencies for later use - use same cache name as 'setup-java' in the previous step
       - name: Cache local Maven repository

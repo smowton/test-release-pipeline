@@ -21,14 +21,12 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - run: echo "Will start a Maven Central upload with version ${{ github.ref }}"
+    - run: echo "Will start a Maven Central upload with version ${{ github.ref_name }}"
       shell: bash
     - name: Publish package
       shell: bash
       run: |
-        echo "mvn ${{ inputs.mvn-cli-opts }} -Prelease -DskipTests -DskipAssembly=true -Dmaven.install.skip=true -Drevision=${{ github.ref }} deploy"
-        mvn ${{ inputs.mvn-cli-opts }} -Prelease -DskipTests -DskipAssembly=true -Dmaven.install.skip=true -Drevision=${{ github.ref }} deploy
+         mvn ${{ inputs.mvn-cli-opts }} -Prelease -DskipTests -DskipAssembly=true -Dmaven.install.skip=true -Drevision=${{ github.ref_name }} -Dgpg.passphrase=${{ inputs.gpg-passphrase }} deploy
       env:
-        SIGN_KEY_PASS: ${{ inputs.gpg-passphrase }}
         MAVEN_USERNAME: ${{ inputs.sonatype-user }}
         MAVEN_PASSWORD: ${{ inputs.sonatype-token }}
