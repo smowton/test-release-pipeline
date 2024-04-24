@@ -19,7 +19,8 @@ runs:
     - name: Print previous tag
       shell: bash
       run: |
-        echo "${{ env.PREV_TAG }}"
+        echo "prev tag: ${{ env.PREV_TAG }}"
+        echo "cur tag: ${{ github.ref_name }}"
 
     - name: Print all env variables
       shell: bash
