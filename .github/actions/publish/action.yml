@@ -9,26 +9,38 @@ inputs:
 runs:
   using: "composite"
   steps:
+    - name: Determine previous tag
+      id: vars
+      shell: bash
+      run: |
+        # list tags in reverse order and extract the 2nd line to learn the 
+        # previous tag
+        prev_tag = git tag --sort=v:refname | sed -n '2p'
+        echo "prev_tag=$prev_tag" >> $GITHUB_OUTPUT
+
     - name: Generate changelog
       id: changelog
       uses: metcalfc/changelog-generator@v4.3.1
       with:
         myToken: ${{ inputs.github-token }}
+        head-ref: ${{ github.ref_name }}
+        base-ref: ${{ steps.vars.outputs.prev_tag }}
+
     - name: Publish to GitHub Repository
       id: create_release
-      uses: ncipollo/release-action@v1
+      uses: ncipollo/release-action@v1.14.0
       with:
-        tag: ${{ github.ref }}
-        name: Release ${{ github.ref }}
+        tag: ${{ github.ref_name }}
+        name: Release ${{ github.ref_name }}
         body: |
-          Grab the new version from Maven Central https://repo1.manven.org/maven2/net/kessra/test-release-pipeline/${{ github.ref }}/ by using it in your deps
+          Grab the new version from Maven Central https://repo1.manven.org/maven2/net/kessra/test-release-pipeline/${{ github.ref_name }}/ by using it in your deps
           
           ```
           <dependencies>
             <dependency>
                 <groupId>net.kessra</groupId>
                 <artifactId>test-release-pipeline</artifactId>
-                <version>${{ github.ref }}</version>
+                <version>${{ github.ref_name }}</version>
             </dependency>
           </dependencies>
           ```
