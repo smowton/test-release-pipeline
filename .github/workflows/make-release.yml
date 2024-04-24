@@ -60,7 +60,6 @@ jobs:
           # environment variables for the username and password/token to the Apache Maven repository
           server-username: MAVEN_USERNAME
           server-password: MAVEN_PASSWORD
-          gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
 
       # cache Maven dependencies for later use - use same cache name as 'setup-java' in the previous step
       - name: Cache local Maven repository
