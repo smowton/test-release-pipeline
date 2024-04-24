@@ -14,9 +14,17 @@ runs:
       # list tags in reverse order and extract the 2nd line to learn the
       # previous tag
       run: |
-        echo "PREV_TAG=$(git tag --sort=-v:refname | sed -n '2p')" >> $GITHUB_ENV
-        echo "TEST=abc" >> $GITHUB_ENV
-        echo "FOO=$(git status)" >> $GITHUB_ENV
+        {
+          echo "PREV_TAG<<EOF"
+          git tag --sort=-v:refname | sed -n '2p'
+          echo EOF
+        } >> $GITHUB_ENV
+        echo "TEST=abc" >> "$GITHUB_ENV"
+        {
+          echo "FOO<<EOF"
+          git status
+          echo EOF
+        } >> "$GITHUB_ENV"
 
     - name: Print previous tag
       shell: bash
@@ -24,7 +32,7 @@ runs:
         echo "prev tag: ${{ env.PREV_TAG }}"
         echo "cur tag: ${{ github.ref_name }}"
         echo "test: ${{ env.TEST }}"
-        echo "${{ env.FOO }}"
+        echo "foo: ${{ env.FOO }}"
 
 #    - name: Print all env variables
 #      shell: bash
