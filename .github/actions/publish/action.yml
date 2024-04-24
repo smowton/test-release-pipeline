@@ -14,13 +14,16 @@ runs:
       # list tags in reverse order and extract the 2nd line to learn the
       # previous tag
       run: |
-        prev_tag=`git tag --sort=-v:refname | sed -n '2p'`
-        echo "PREV_TAG=$prev_tag" >> $GITHUB_ENV
+        echo "PREV_TAG=$(git tag --sort=-v:refname | sed -n '2p')" >> $GITHUB_ENV
 
     - name: Print previous tag
       shell: bash
       run: |
         echo "${{ env.PREV_TAG }}"
+
+    - name: Print all env variables
+      shell: bash
+      run: env
 
     - name: Generate changelog
       id: changelog
@@ -29,10 +32,6 @@ runs:
         myToken: ${{ inputs.github-token }}
         head-ref: ${{ github.ref_name }}
         base-ref: ${{ env.PREV_TAG }}
-
-    - name: Print all env variables
-      shell: bash
-      run: env
 
     - name: Publish to GitHub Repository
       id: create_release
