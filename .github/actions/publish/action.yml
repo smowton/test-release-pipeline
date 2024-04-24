@@ -10,14 +10,17 @@ runs:
   using: "composite"
   steps:
     - name: Determine previous tag
-      id: vars
+      shell: bash
+      # list tags in reverse order and extract the 2nd line to learn the
+      # previous tag
+      run: |
+        prev_tag=`git tag --sort=-v:refname | sed -n '2p'`
+        echo "PREV_TAG=$prev_tag" >> $GITHUB_ENV
+
+    - name: Print previous tag
       shell: bash
       run: |
-        # list tags in reverse order and extract the 2nd line to learn the 
-        # previous tag
-        prev_tag=`git tag --sort=-v:refname | sed -n '2p'`
-        echo "$prev_tag"
-        echo "prev_tag=$prev_tag" >> $GITHUB_OUTPUT
+        echo "${{ env.PREV_TAG }}"
 
     - name: Generate changelog
       id: changelog
@@ -25,7 +28,11 @@ runs:
       with:
         myToken: ${{ inputs.github-token }}
         head-ref: ${{ github.ref_name }}
-        base-ref: ${{ steps.vars.outputs.prev_tag }}
+        base-ref: ${{ env.PREV_TAG }}
+
+    - name: Print all env variables
+      shell: bash
+      run: env
 
     - name: Publish to GitHub Repository
       id: create_release
