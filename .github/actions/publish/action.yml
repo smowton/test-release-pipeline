@@ -10,23 +10,22 @@ runs:
   using: "composite"
   steps:
     - name: "Determine previous tag"
+      id: prev_tag
       shell: bash
       run: |
         git fetch --all --tags
         prev_tag=$(git tag | sort -V | grep -B 1 ${{ github.ref_name }} | head -1)
+        echo "prev_tag=$prev_tag" >> "$GITHUB_OUTPUT"
         echo "prev_tag: $prev_tag"
-        echo -e "prev_tag2: $prev_tag"
-        echo "PREV_TAG=$prev_tag" >> "GITHUB_ENV"
 
     - name: "Print previous tag"
       shell: bash
       run: |
         echo "prev tag: $prev_tag"
-        echo "prev tag2: ${{ env.PREV_TAG }}"
-        echo -e "prev tag3: ${{ env.PREV_TAG }}"
+        echo "prev tag2: ${{ steps.prev_tag.outputs.prev_tag }}"
         echo "cur tag: ${{ github.ref_name }}"
       env:
-        prev_tag: ${{ env.PREV_TAG }}
+        prev_tag: ${{ steps.prev_tag.outputs.prev_tag }}
 
     - name: "Generate changelog"
       id: changelog
@@ -34,7 +33,7 @@ runs:
       with:
         myToken: ${{ inputs.github-token }}
         head-ref: ${{ github.ref_name }}
-        base-ref: ${{ env.PREV_TAG }}
+        base-ref: ${{ steps.prev_tag.outputs.prev_tag }}
 
     - name: "Publish to GitHub Repository"
       id: create_release
