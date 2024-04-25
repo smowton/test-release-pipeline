@@ -14,6 +14,7 @@ runs:
       # list tags in reverse order and extract the 2nd line to learn the
       # previous tag
       run: |
+        git fetch --all --tags
         tagl=$(git tag -l | sed "s/'/\\\'/g" | sed 's/"/\\"/g')
         echo -e "tag -l: $tagl"
 
