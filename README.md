@@ -6,3 +6,5 @@ to `Maven Central` upon manual tagging of a commit.
 The `Github Actions` should furthermore activate on each pull-request. The 
 main branch therefore will be protected later on to force stuff through an 
 automatic CI pipeline.
+
+Dummy edit
