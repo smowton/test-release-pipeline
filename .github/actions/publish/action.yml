@@ -9,18 +9,19 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: Determine previous tag
+    - name: "Determine previous tag"
       shell: bash
       # list tags in reverse order and extract the 2nd line to learn the
       # previous tag
       run: |
         tags=$(git tag --sort=-v:refname)
-        echo "$tags"
+        echo $tags
+        echo "tags: $tags"
         prev_tag=$(sed -n '2p' <<< "$tags")
-        echo "$prev_tag"
+        echo "prev_tag: $prev_tag"
         echo "PREV_TAG=$prev_tag" >> "GITHUB_ENV"
 
-    - name: Determine previous tag
+    - name: "Determine previous tag 1"
       shell: bash
       # list tags in reverse order and extract the 2nd line to learn the
       # previous tag
@@ -31,21 +32,25 @@ runs:
           echo EOF
         } >> "$GITHUB_ENV"
 
-    - name: Determine previous tag2
+    - name: "Determine previous tag 2"
       shell: bash
       # list tags in reverse order and extract the 2nd line to learn the
       # previous tag
       run: |
-        echo "PREV_TAG_2=$(/bin/bash -c \"git tag --sort=-v:refname | sed -n '2p'\")" >> "$GITHUB_ENV"
+        pev_tag=`/bin/bash -c \"git tag --sort=-v:refname | sed -n '2p'\"`
+        echo "prev_tag: $prev_tag"
+        echo "PREV_TAG_2=$prev_tag" >> "$GITHUB_ENV"
 
-    - name: Determine previous tag3
+    - name: "Determine previous tag 3"
       shell: bash
       # list tags in reverse order and extract the 2nd line to learn the
       # previous tag
       run: |
-        echo "PREV_TAG_3=`/bin/bash -c \"git tag --sort=-v:refname | sed -n '2p'\"`" >> "$GITHUB_ENV"
+        prev_tag=`/bin/bash -c "git tag --sort=-v:refname | sed -n '2p'"`
+        echo "prev_tag: $prev_tag"
+        echo "PREV_TAG_3=$prev_tag" >> "$GITHUB_ENV"
 
-    - name: Determine previous tag
+    - name: "Determine previous tag 4"
       shell: bash
       # list tags in reverse order and extract the 2nd line to learn the
       # previous tag
@@ -56,17 +61,13 @@ runs:
           echo EOF
         } >> "$GITHUB_ENV"
 
-    - name: Print previous tag
+    - name: "Print previous tag"
       shell: bash
       run: |
         echo "prev tag: ${{ env.PREV_TAG }}"
-        echo "prev tag 1: ${{ env.PREV_TAG_1 }}"
-        echo "prev tag 1: ${{ env.PREV_TAG_2 }}"
-        echo "prev tag 1: ${{ env.PREV_TAG_3 }}"
-        echo "prev tag 1: ${{ env.PREV_TAG_4 }}"
         echo "cur tag: ${{ github.ref_name }}"
 
-    - name: Generate changelog
+    - name: "Generate changelog"
       id: changelog
       uses: metcalfc/changelog-generator@v4.3.1
       with:
@@ -74,7 +75,7 @@ runs:
         head-ref: ${{ github.ref_name }}
         base-ref: ${{ env.PREV_TAG }}
 
-    - name: Publish to GitHub Repository
+    - name: "Publish to GitHub Repository"
       id: create_release
       uses: ncipollo/release-action@v1.14.0
       with:
