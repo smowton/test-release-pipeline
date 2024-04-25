@@ -15,7 +15,7 @@ runs:
       run: |
         git fetch --all --tags
         prev_tag=$(git tag | sort -V | grep -B 1 ${{ github.ref_name }} | head -1)
-        echo "prev_tag=${prev_tag}" >> "$GITHUB_OUTPUT"
+        echo "prev_tag=$prev_tag" >> "$GITHUB_OUTPUT"
         echo "prev_tag: $prev_tag"
 
     - name: "Print previous tag"
