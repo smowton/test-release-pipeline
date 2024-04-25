@@ -16,16 +16,12 @@ runs:
         git fetch --all --tags
         prev_tag=$(git tag | sort -V | grep -B 1 ${{ github.ref_name }} | head -1)
         echo "prev_tag=$prev_tag" >> "$GITHUB_OUTPUT"
-        echo "prev_tag: $prev_tag"
 
     - name: "Print previous tag"
       shell: bash
       run: |
-        echo "prev tag: $prev_tag"
-        echo "prev tag2: ${{ steps.prev_tag.outputs.prev_tag }}"
+        echo "prev tag: ${{ steps.prev_tag.outputs.prev_tag }}"
         echo "cur tag: ${{ github.ref_name }}"
-      env:
-        prev_tag: ${{ steps.prev_tag.outputs.prev_tag }}
 
     - name: "Generate changelog"
       id: changelog
