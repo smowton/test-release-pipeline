@@ -16,10 +16,10 @@ runs:
       run: |
         {
           echo "PREV_TAG<<EOF"
-          /bin/bash -c "git tag --sort=-v:refname | sed -n '2p'"
+          $(/bin/bash -c "git tag --sort=-v:refname | sed -n '2p'")
           echo EOF
         } >> "$GITHUB_ENV"
-        echo "PREV_TAG_0=$(`/bin/bash -c "git tag --sort=-v:refname | sed -n '2p'"`)" >> "$GITHUB_ENV"
+        echo "PREV_TAG_0=$(/bin/bash -c \"git tag --sort=-v:refname | sed -n '2p'\")" >> "$GITHUB_ENV"
 
     - name: Print previous tag
       shell: bash
