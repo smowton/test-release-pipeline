@@ -20,11 +20,13 @@ runs:
           echo EOF
         } >> "$GITHUB_ENV"
         echo "PREV_TAG_0=$(/bin/bash -c \"git tag --sort=-v:refname | sed -n '2p'\")" >> "$GITHUB_ENV"
+        echo "PREV_TAG_1=`/bin/bash -c \"git tag --sort=-v:refname | sed -n '2p'\"` >> "$GITHUB_ENV"
 
     - name: Print previous tag
       shell: bash
       run: |
         echo "prev tag 0: ${{ env.PREV_TAG_0 }}"
+        echo "prev tag 1: ${{ env.PREV_TAG_1 }}"
         echo "prev tag: ${{ env.PREV_TAG }}"
         echo "cur tag: ${{ github.ref_name }}"
 
