@@ -14,9 +14,18 @@ runs:
       # list tags in reverse order and extract the 2nd line to learn the
       # previous tag
       run: |
-        tags=$(git tag --sort=-v:refname)
+        echo "$(git tag -l)"
+        echo "$(git describe --tags $(git rev-list --tags --max-count=5)"
+        tags=`git tag`
         echo $tags
         echo "tags: $tags"
+        sorted_by_version=`sort -V <<< "$tags"`
+        echo "sorted_by_version: $sorted_by_version"
+        grepped=$(grep -B 1 `git describe --tags` <<< "$sorted")
+        echo "grepped: $grepped"
+        prevTag=`head -1 <<< "$grepped"`
+        echo "prevTag: $prevTag"
+        
         prev_tag=$(sed -n '2p' <<< "$tags")
         echo "prev_tag: $prev_tag"
         echo "PREV_TAG=$prev_tag" >> "GITHUB_ENV"
@@ -37,7 +46,7 @@ runs:
       # list tags in reverse order and extract the 2nd line to learn the
       # previous tag
       run: |
-        pev_tag=`/bin/bash -c \"git tag --sort=-v:refname | sed -n '2p'\"`
+        pev_tag=`/bin/bash -c "git tag --sort=-v:refname | sed -n '2p'"`
         echo "prev_tag: $prev_tag"
         echo "PREV_TAG_2=$prev_tag" >> "$GITHUB_ENV"
 
@@ -46,17 +55,8 @@ runs:
       # list tags in reverse order and extract the 2nd line to learn the
       # previous tag
       run: |
-        prev_tag=`/bin/bash -c "git tag --sort=-v:refname | sed -n '2p'"`
-        echo "prev_tag: $prev_tag"
-        echo "PREV_TAG_3=$prev_tag" >> "$GITHUB_ENV"
-
-    - name: "Determine previous tag 4"
-      shell: bash
-      # list tags in reverse order and extract the 2nd line to learn the
-      # previous tag
-      run: |
         {
-          echo "PREV_TAG_4<<EOF"
+          echo "PREV_TAG_3<<EOF"
           $(/bin/bash -c "git tag --sort=-v:refname | sed -n '2p'")
           echo EOF
         } >> "$GITHUB_ENV"
