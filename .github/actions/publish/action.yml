@@ -14,20 +14,23 @@ runs:
       # list tags in reverse order and extract the 2nd line to learn the
       # previous tag
       run: |
-        echo "$(git tag -l)"
-        echo "$(git describe --tags $(git rev-list --tags --max-count=5)"
-        tags=`git tag`
-        echo $tags
-        echo "tags: $tags"
-        sorted_by_version=`sort -V <<< "$tags"`
-        echo "sorted_by_version: $sorted_by_version"
+        tagl=$(git tag -l | sed "s/'/\\\'/g" | sed 's/"/\\"/g')
+        echo -e "tag -l: $tagl"
+
+    - name: "Determine previous tag"
+      shell: bash
+      run: |
+        tags=$(git tag)
+        echo -e "tags:\n$tags"
+        sorted_by_version=$(sort -V <<< "$tags")
+        echo -e "sorted_by_version: $sorted_by_version"
         grepped=$(grep -B 1 `git describe --tags` <<< "$sorted")
-        echo "grepped: $grepped"
-        prevTag=`head -1 <<< "$grepped"`
-        echo "prevTag: $prevTag"
+        echo -e "grepped: $grepped"
+        prevTag=$(head -1 <<< "$grepped")
+        echo -e "prevTag: $prevTag"
         
         prev_tag=$(sed -n '2p' <<< "$tags")
-        echo "prev_tag: $prev_tag"
+        echo -e "prev_tag: $prev_tag"
         echo "PREV_TAG=$prev_tag" >> "GITHUB_ENV"
 
     - name: "Determine previous tag 1"
