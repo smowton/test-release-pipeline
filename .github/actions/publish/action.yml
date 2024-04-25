@@ -12,43 +12,8 @@ runs:
     - name: "Determine previous tag"
       shell: bash
       run: |
-        prevTag=$(git tag | sort -V | grep -B 1 ${{ github.ref_name }} |  head -1)
-        echo -e "prevTag: $prevTag"
-        
-        prev_tag=$(git tag | sort -V | sed -n '2p')
-        echo -e "prev_tag: $prev_tag"
+        prev_tag=$(git tag | sort -V | grep -B 1 ${{ github.ref_name }} | head -1)
         echo "PREV_TAG=$prev_tag" >> "GITHUB_ENV"
-
-    - name: "Determine previous tag 1"
-      shell: bash
-      # list tags in reverse order and extract the 2nd line to learn the
-      # previous tag
-      run: |
-        {
-          echo "PREV_TAG_1<<EOF"
-          `/bin/bash -c "git tag --sort=-v:refname | sed -n '2p'"`
-          echo EOF
-        } >> "$GITHUB_ENV"
-
-    - name: "Determine previous tag 2"
-      shell: bash
-      # list tags in reverse order and extract the 2nd line to learn the
-      # previous tag
-      run: |
-        pev_tag=`/bin/bash -c "git tag --sort=-v:refname | sed -n '2p'"`
-        echo "prev_tag: $prev_tag"
-        echo "PREV_TAG_2=$prev_tag" >> "$GITHUB_ENV"
-
-    - name: "Determine previous tag 3"
-      shell: bash
-      # list tags in reverse order and extract the 2nd line to learn the
-      # previous tag
-      run: |
-        {
-          echo "PREV_TAG_3<<EOF"
-          $(/bin/bash -c "git tag --sort=-v:refname | sed -n '2p'")
-          echo EOF
-        } >> "$GITHUB_ENV"
 
     - name: "Print previous tag"
       shell: bash
